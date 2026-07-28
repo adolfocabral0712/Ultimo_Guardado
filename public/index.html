@@ -190,6 +190,13 @@
 <script>
 const archivos = [
     {
+        nombre: "DATOS ARCGIS",
+        limiteMinutos: 90,
+        tipo: "json",
+        campoActualizado: "ACTUALIZADO",
+        url: "https://dl.dropbox.com/scl/fi/z2y0ojao8niahmtk525jc/DatosArcGIS.json?rlkey=kh8pobprt7hw0pwe7xrhru7ma&dl=1"
+    },
+    {
         nombre: "ENVÍO DE CORREOS",
         limiteMinutos: 5,
         hoja: null,
@@ -291,7 +298,7 @@ function fechaConsulta() {
 
 function limpiarTextoActualizacion(texto) {
     return String(texto || "")
-        .replace(/^\s*Act\.\s*:\s*/i, "")
+        .replace(/^\s*Act\.\s*:?\s*/i, "")
         .replace(/^\s*Actualizado\s*:\s*/i, "")
         .trim();
 }
@@ -538,7 +545,59 @@ async function descargarArchivo(urlOriginal) {
     );
 }
 
+function extraerActualizadoJSON(contenido, archivo) {
+    const campo = archivo.campoActualizado || "ACTUALIZADO";
+
+    let valor = "";
+
+    if (Array.isArray(contenido)) {
+        const primerRegistro = contenido.find(
+            item => item && typeof item === "object" && item[campo]
+        );
+
+        if (primerRegistro) {
+            valor = primerRegistro[campo];
+        }
+    } else if (contenido && typeof contenido === "object") {
+        valor =
+            contenido[campo] ||
+            contenido.actualizado ||
+            contenido.Actualizado ||
+            "";
+    }
+
+    valor = String(valor || "").trim();
+
+    if (!valor) {
+        throw new Error(`No se encontró el campo ${campo} en el JSON`);
+    }
+
+    const textoLimpio = limpiarTextoActualizacion(valor);
+    const fecha = convertirAFecha(
+        { v: textoLimpio },
+        textoLimpio
+    );
+
+    return {
+        valor: textoLimpio,
+        hoja: "JSON",
+        fecha
+    };
+}
+
+async function leerActualizacionJSON(archivo) {
+    const datos = await descargarArchivo(archivo.url);
+    const texto = new TextDecoder("utf-8").decode(datos);
+    const contenido = JSON.parse(texto);
+
+    return extraerActualizadoJSON(contenido, archivo);
+}
+
 async function leerActualizacion(archivo) {
+    if (archivo.tipo === "json") {
+        return leerActualizacionJSON(archivo);
+    }
+
     const datos = await descargarArchivo(archivo.url);
 
     const libro = XLSX.read(datos, {
@@ -615,6 +674,9 @@ async function actualizar() {
                     <span class="estado ${item.estado.clase}">
                         ${escapar(item.estado.texto)}
                     </span>
+                    <div style="margin-top:6px;font-size:12px;font-weight:400;color:#667085;">
+                        ${escapar(item.resultado.valor)}
+                    </div>
                 </td>
             </tr>
         `;
