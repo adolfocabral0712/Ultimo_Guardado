@@ -166,7 +166,7 @@
 <div class="contenedor">
     <h1>Última actualización</h1>
     <p class="subtitulo">
-        El dashboard descarga cada libro desde Dropbox y lee la hoja y celda configuradas.
+        El dashboard consulta las fuentes configuradas en Dropbox y muestra su última actualización.
     </p>
 
     <div class="panel">
@@ -207,26 +207,23 @@ const archivos = [
     {
         nombre: "DESCARGA POLO",
         limiteMinutos: 15,
-        hoja: "Hoja1",
-        celda: "A1",
-        buscarEnTodasLasHojas: false,
-        url: "https://dl.dropbox.com/scl/fi/a6cv8r5dcc85x10ztxzd0/DESCARGA-POLO.xlsm?rlkey=1f0s6ysc4og0l8b6q7mq4a1mc&dl=1"
+        tipo: "json",
+        campoActualizado: "actualizado",
+        url: "https://dl.dropbox.com/scl/fi/eo971dn4yrjz5h71qkh2b/EstadoDescargaRemitos.json?rlkey=j5udth4t07t8vpaoyqel87j93&dl=1"
     },
     {
         nombre: "MUESTRAS ONLINE",
         limiteMinutos: 35,
-        hoja: "Hoja3",
-        celda: "B1",
-        buscarEnTodasLasHojas: false,
-        url: "https://dl.dropbox.com/scl/fi/vxlc0xscum4y2smwudxm7/MUESTRAS-online.xlsm?rlkey=uj0iwjahm9uapfdik3aduxbtn&dl=1"
+        tipo: "json",
+        campoActualizado: "actualizado",
+        url: "https://dl.dropbox.com/scl/fi/ri23xu428izh29irawrvr/Mediciones.json?rlkey=54u6a72489nu5qejnqwb9jw91&dl=1"
     },
     {
         nombre: "PILAS ONLINE",
         limiteMinutos: 35,
-        hoja: "Hoja2",
-        celda: "A1",
-        buscarEnTodasLasHojas: false,
-        url: "https://dl.dropbox.com/scl/fi/9ocvyfhxi5lj1o8gxz8f0/PilasOnline.xlsm?rlkey=e4gh5o7sxno32u0nk1webl25r&dl=1"
+        tipo: "json",
+        campoActualizado: "actualizado",
+        url: "https://dl.dropbox.com/scl/fi/bx7bxqkh2f3dmwu5664ba/PilasOnline.json?rlkey=cxgums4j1z2pj8jkz0w7a9zmh&dl=1"
     },
     {
         nombre: "CONSULTAS SISTEMA",
