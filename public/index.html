@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Actualización de archivos Excel</title>
-
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<title>Última actualización</title>
 
 <style>
     body {
@@ -63,12 +61,6 @@
         font-weight: 700;
     }
 
-    .valor {
-        font-size: 17px;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
     .hace {
         font-weight: 700;
         white-space: nowrap;
@@ -86,16 +78,6 @@
     .estado-verde {
         background: #dcfce7;
         color: #166534;
-    }
-
-    .estado-amarillo {
-        background: #fef3c7;
-        color: #92400e;
-    }
-
-    .estado-naranja {
-        background: #ffedd5;
-        color: #9a3412;
     }
 
     .estado-rojo {
@@ -117,12 +99,20 @@
         font-weight: 700;
     }
 
+    .detalle {
+        margin-top: 6px;
+        font-size: 12px;
+        font-weight: 400;
+        color: #667085;
+    }
+
     .barra {
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 16px;
         margin-top: 16px;
+        flex-wrap: wrap;
     }
 
     #consulta {
@@ -153,20 +143,18 @@
         th, td {
             padding: 11px 9px;
         }
-
-        .valor {
-            font-size: 15px;
-            white-space: normal;
-        }
     }
 </style>
 </head>
 
 <body>
+
 <div class="contenedor">
+
     <h1>Última actualización</h1>
+
     <p class="subtitulo">
-        El dashboard consulta las fuentes configuradas en Dropbox y muestra su última actualización.
+        Estado consolidado de las fuentes de datos.
     </p>
 
     <div class="panel">
@@ -185,102 +173,54 @@
         <span id="consulta"></span>
         <button id="actualizar" type="button">Actualizar ahora</button>
     </div>
+
 </div>
 
 <script>
-const archivos = [
-    {
-        nombre: "DATOS ARCGIS",
-        limiteMinutos: 90,
-        tipo: "json",
-        campoActualizado: "ACTUALIZADO",
-        url: "https://dl.dropbox.com/scl/fi/z2y0ojao8niahmtk525jc/DatosArcGIS.json?rlkey=kh8pobprt7hw0pwe7xrhru7ma&dl=1"
-    },
-    {
-        nombre: "ENVÍO DE CORREOS",
-        limiteMinutos: 5,
-        hoja: null,
-        celda: "I1",
-        buscarEnTodasLasHojas: true,
-        url: "https://dl.dropbox.com/scl/fi/l87boeiqu54yra3i0evd6/aENVIO-DE-CORREOS.xlsb?rlkey=149gw31ntsbso8vtpix30yxjl&dl=1"
-    },
-    {
-        nombre: "DESCARGA POLO",
-        limiteMinutos: 15,
-        tipo: "json",
-        campoActualizado: "actualizado",
-        url: "https://dl.dropbox.com/scl/fi/eo971dn4yrjz5h71qkh2b/EstadoDescargaRemitos.json?rlkey=j5udth4t07t8vpaoyqel87j93&dl=1"
-    },
-    {
-        nombre: "MUESTRAS ONLINE",
-        limiteMinutos: 35,
-        tipo: "json",
-        campoActualizado: "actualizado",
-        url: "https://dl.dropbox.com/scl/fi/ri23xu428izh29irawrvr/Mediciones.json?rlkey=54u6a72489nu5qejnqwb9jw91&dl=1"
-    },
-    {
-        nombre: "PILAS ONLINE",
-        limiteMinutos: 35,
-        tipo: "json",
-        campoActualizado: "actualizado",
-        url: "https://dl.dropbox.com/scl/fi/bx7bxqkh2f3dmwu5664ba/PilasOnline.json?rlkey=cxgums4j1z2pj8jkz0w7a9zmh&dl=1"
-    },
-    {
-        nombre: "CONSULTAS SISTEMA",
-        limiteMinutos: 10,
-        hoja: "Hoja2",
-        celda: "A1",
-        buscarEnTodasLasHojas: false,
-        url: "https://dl.dropbox.com/scl/fi/9i03jw9jkxuxjic11geef/CONSULTAS-SISTEMA.xlsm?rlkey=jky2kmdl0159904ytat5j9v66&dl=1"
-    },
-    {
-        nombre: "PLANILLA JAUSER",
-        limiteMinutos: 15,
-        hoja: "DATOS_PARA_IMPORTAR",
-        celda: "B1",
-        buscarEnTodasLasHojas: false,
-        url: "https://dl.dropbox.com/scl/fi/abxg80f8tb8947ruszwz9/PLANILLA-JAUSER.xlsb?rlkey=99iedhq9pfexfev568boeg3nl&dl=1"
-    },
-    {
-        nombre: "PLANILLA",
-        limiteMinutos: 15,
-        hoja: "DATOS_PARA_IMPORTAR",
-        celda: "E1",
-        buscarEnTodasLasHojas: false,
-        url: "https://dl.dropbox.com/scl/fi/j47cweyd63abyn7fb741i/PLANILLA.xlsb?rlkey=vjhsdaa5s4jocma2g8cwl5njo&dl=0"
-    },
-    {
-        nombre: "AGREGAR CONDUCTORES A REMITO SP",
-        limiteMinutos: 15,
-        hoja: "RECIBO",
-        celda: "R1",
-        buscarEnTodasLasHojas: false,
-        url: "https://dl.dropbox.com/scl/fi/8r7iugu2bvcmstfwfwutv/AGREGAR-CONDUCTORES-A-REMITO-SP.xlsm?rlkey=f10ete2nh3hvwbnwq6p79ejbn&dl=1"
-    }
-];
+
+/* ==========================================================
+   CONFIGURACIÓN
+   ========================================================== */
+
+const URL_ULTIMO_GUARDADO =
+    "https://dl.dropbox.com/scl/fi/9ts4dhfsqh6lhi49kdvf2/UltimoGuardado.json?rlkey=j4t4r35xlorh62pzrknxbwynw&dl=1";
+
+/*
+   Conservamos los límites individuales que tenía el dashboard.
+   Si aparece una fuente nueva que no esté aquí, se usa el
+   limiteMinutos del propio UltimoGuardado.json.
+*/
+const LIMITES = {
+    "DATOS ARCGIS": 90,
+    "ENVÍO DE CORREOS": 5,
+    "DESCARGA POLO": 15,
+    "MUESTRAS ONLINE": 35,
+    "PILAS ONLINE": 35,
+    "CONSULTAS SISTEMA": 10,
+    "PLANILLA JAUSER": 15,
+    "PLANILLA": 15,
+    "AGREGAR CONDUCTORES A REMITO SP": 15
+};
 
 const tabla = document.getElementById("tabla");
 const boton = document.getElementById("actualizar");
 const consulta = document.getElementById("consulta");
 
+
+/* ==========================================================
+   UTILIDADES
+   ========================================================== */
+
 function escapar(texto) {
-    return String(texto)
+    return String(texto ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
 }
 
-function mostrarCargando() {
-    tabla.innerHTML = archivos.map(archivo => `
-        <tr>
-            <td class="archivo">${escapar(archivo.nombre)}</td>
-            <td class="cargando">Descargando y leyendo…</td>
-        </tr>
-    `).join("");
-}
 
-function fechaConsulta() {
+function formatearFechaConsulta(fecha) {
     return new Intl.DateTimeFormat("es-UY", {
         day: "2-digit",
         month: "2-digit",
@@ -289,75 +229,54 @@ function fechaConsulta() {
         minute: "2-digit",
         second: "2-digit",
         hour12: false
-    }).format(new Date());
+    }).format(fecha);
 }
 
 
-function limpiarTextoActualizacion(texto) {
-    return String(texto || "")
-        .replace(/^\s*Act\.\s*:?\s*/i, "")
-        .replace(/^\s*Actualizado\s*:\s*/i, "")
-        .trim();
+function formatearFechaArchivo(fecha) {
+    return new Intl.DateTimeFormat("es-UY", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    }).format(fecha);
 }
 
-function convertirAFecha(celda, valorMostrado) {
-    if (!celda) return null;
 
-    if (celda.v instanceof Date && !Number.isNaN(celda.v.getTime())) {
-        return celda.v;
+function convertirFechaISO(valor) {
+
+    if (!valor) return null;
+
+    const fecha = new Date(valor);
+
+    if (Number.isNaN(fecha.getTime())) {
+        return null;
     }
 
-    if (typeof celda.v === "number" && typeof XLSX !== "undefined") {
-        const partes = XLSX.SSF.parse_date_code(celda.v);
-        if (partes) {
-            return new Date(
-                partes.y,
-                partes.m - 1,
-                partes.d,
-                partes.H || 0,
-                partes.M || 0,
-                Math.floor(partes.S || 0)
-            );
-        }
-    }
-
-    const texto = limpiarTextoActualizacion(valorMostrado || celda.v || "");
-
-    // Formato habitual: dd/mm/yyyy hh:mm o dd/mm/yyyy hh:mm:ss
-    let m = texto.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
-    if (m) {
-        let anio = Number(m[3]);
-        if (anio < 100) anio += 2000;
-
-        const fecha = new Date(
-            anio,
-            Number(m[2]) - 1,
-            Number(m[1]),
-            Number(m[4] || 0),
-            Number(m[5] || 0),
-            Number(m[6] || 0)
-        );
-
-        if (!Number.isNaN(fecha.getTime())) return fecha;
-    }
-
-    const fechaGenerica = new Date(texto);
-    return Number.isNaN(fechaGenerica.getTime()) ? null : fechaGenerica;
+    return fecha;
 }
+
 
 function calcularHaceCuanto(fecha, limiteMinutos) {
+
     if (!(fecha instanceof Date) || Number.isNaN(fecha.getTime())) {
         return {
             texto: "Fecha no reconocida",
-            clase: "estado-gris"
+            clase: "estado-gris",
+            minutosOrden: Number.POSITIVE_INFINITY
         };
     }
 
     let diferencia = Date.now() - fecha.getTime();
+
     const futuro = diferencia < 0;
+
     diferencia = Math.abs(diferencia);
 
     const minutosTotales = Math.floor(diferencia / 60000);
+
     const dias = Math.floor(minutosTotales / 1440);
     const horas = Math.floor((minutosTotales % 1440) / 60);
     const minutos = minutosTotales % 60;
@@ -376,9 +295,13 @@ function calcularHaceCuanto(fecha, limiteMinutos) {
 
     let clase = "estado-verde";
 
-    if (futuro || limiteMinutos === null || limiteMinutos === undefined) {
+    if (futuro) {
         clase = "estado-gris";
-    } else if (minutosTotales > limiteMinutos) {
+    } else if (
+        limiteMinutos !== null &&
+        limiteMinutos !== undefined &&
+        minutosTotales > limiteMinutos
+    ) {
         clase = "estado-rojo";
     }
 
@@ -388,305 +311,262 @@ function calcularHaceCuanto(fecha, limiteMinutos) {
         minutosOrden: futuro ? -minutosTotales : minutosTotales
     };
 }
-function valorCeldaFormateado(celda) {
-    if (!celda) return "";
 
-    let valor = "";
 
-    if (celda.w !== undefined && celda.w !== null && String(celda.w).trim() !== "") {
-        valor = String(celda.w).trim();
-    } else if (celda.v instanceof Date) {
-        valor = new Intl.DateTimeFormat("es-UY", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false
-        }).format(celda.v);
-    } else {
-        valor = celda.v === undefined || celda.v === null
-            ? ""
-            : String(celda.v).trim();
-    }
+function mostrarCargando() {
 
-    return limpiarTextoActualizacion(valor);
+    tabla.innerHTML = `
+        <tr>
+            <td class="archivo">ULTIMO GUARDADO</td>
+            <td class="cargando">Consultando…</td>
+        </tr>
+    `;
+
 }
 
-function leerCeldaExacta(libro, archivo) {
-    if (archivo.buscarEnTodasLasHojas) {
-        for (const nombreHoja of libro.SheetNames) {
-            const hoja = libro.Sheets[nombreHoja];
-            const celda = hoja[archivo.celda];
-            const valor = valorCeldaFormateado(celda);
 
-            if (valor !== "") {
-                return {
-                    valor,
-                    hoja: nombreHoja,
-                    fecha: convertirAFecha(celda, valor)
-                };
-            }
+/* ==========================================================
+   DESCARGA ÚNICA
+   ========================================================== */
+
+async function descargarUltimoGuardado() {
+
+    const separador = URL_ULTIMO_GUARDADO.includes("?") ? "&" : "?";
+
+    const url =
+        URL_ULTIMO_GUARDADO +
+        separador +
+        "_=" +
+        Date.now();
+
+    /*
+       Primer intento: Dropbox directo.
+       Es la ruta normal y la más rápida.
+    */
+    try {
+
+        const respuesta = await fetch(url, {
+            method: "GET",
+            cache: "no-store",
+            redirect: "follow"
+        });
+
+        if (!respuesta.ok) {
+            throw new Error(`HTTP ${respuesta.status}`);
         }
 
-        throw new Error(`La celda ${archivo.celda} está vacía en todas las hojas`);
-    }
+        return await respuesta.json();
 
-    const hoja = libro.Sheets[archivo.hoja];
+    } catch (errorDirecto) {
 
-    if (!hoja) {
-        throw new Error(`No existe la hoja ${archivo.hoja}`);
-    }
+        /*
+           Fallback únicamente si el navegador bloquea Dropbox
+           por CORS. Sigue siendo UN SOLO archivo JSON, no los
+           9 archivos originales.
+        */
 
-    const celda = hoja[archivo.celda];
-    const valor = valorCeldaFormateado(celda);
+        const proxy =
+            "https://corsproxy.io/?" +
+            encodeURIComponent(url);
 
-    if (valor === "") {
-        throw new Error(`La celda ${archivo.hoja}!${archivo.celda} está vacía`);
-    }
+        const respuestaProxy = await fetch(proxy, {
+            method: "GET",
+            cache: "no-store"
+        });
 
-    return {
-        valor,
-        hoja: archivo.hoja,
-        fecha: convertirAFecha(celda, valor)
-    };
-}
-
-function crearVariantesDropbox(urlOriginal) {
-    const url = new URL(urlOriginal);
-
-    // Quitar controles anteriores para construir enlaces limpios.
-    url.searchParams.delete("dl");
-    url.searchParams.delete("raw");
-    url.searchParams.delete("_");
-
-    const ruta = url.pathname;
-    const consulta = url.searchParams.toString();
-    const sufijo = consulta ? `?${consulta}` : "";
-
-    return [
-        `https://dl.dropbox.com${ruta}${sufijo}&dl=1`,
-        `https://www.dropbox.com${ruta}${sufijo}&raw=1`,
-        `https://www.dropbox.com${ruta}${sufijo}&dl=1`,
-        `https://dl.dropboxusercontent.com${ruta}${sufijo}&dl=1`
-    ];
-}
-
-async function descargarDirecto(url) {
-    const separador = url.includes("?") ? "&" : "?";
-
-    const respuesta = await fetch(url + separador + "_=" + Date.now(), {
-        method: "GET",
-        cache: "no-store",
-        redirect: "follow"
-    });
-
-    if (!respuesta.ok) {
-        throw new Error(`Directo HTTP ${respuesta.status}`);
-    }
-
-    return respuesta.arrayBuffer();
-}
-
-async function descargarConProxy(url) {
-    const proxies = [
-        "https://corsproxy.io/?" + encodeURIComponent(url),
-        "https://api.allorigins.win/raw?url=" + encodeURIComponent(url)
-    ];
-
-    const errores = [];
-
-    for (const proxy of proxies) {
-        try {
-            const respuesta = await fetch(proxy, {
-                method: "GET",
-                cache: "no-store"
-            });
-
-            if (!respuesta.ok) {
-                throw new Error(`HTTP ${respuesta.status}`);
-            }
-
-            return await respuesta.arrayBuffer();
-        } catch (error) {
-            errores.push(error.message);
-        }
-    }
-
-    throw new Error("Proxy: " + errores.join(" | "));
-}
-
-async function descargarArchivo(urlOriginal) {
-    const variantes = crearVariantesDropbox(urlOriginal);
-    const errores = [];
-
-    for (const url of variantes) {
-        try {
-            return await descargarDirecto(url);
-        } catch (errorDirecto) {
-            errores.push(errorDirecto.message);
-
-            try {
-                return await descargarConProxy(url);
-            } catch (errorProxy) {
-                errores.push(errorProxy.message);
-            }
-        }
-    }
-
-    throw new Error(
-        "No se pudo descargar el archivo. " +
-        "Puede ser un bloqueo CORS, un límite de tamaño del proxy o un enlace sin acceso público. " +
-        errores.slice(-4).join(" · ")
-    );
-}
-
-function extraerActualizadoJSON(contenido, archivo) {
-    const campo = archivo.campoActualizado || "ACTUALIZADO";
-
-    let valor = "";
-
-    if (Array.isArray(contenido)) {
-        const primerRegistro = contenido.find(
-            item => item && typeof item === "object" && item[campo]
-        );
-
-        if (primerRegistro) {
-            valor = primerRegistro[campo];
-        }
-    } else if (contenido && typeof contenido === "object") {
-        valor =
-            contenido[campo] ||
-            contenido.actualizado ||
-            contenido.Actualizado ||
-            "";
-    }
-
-    valor = String(valor || "").trim();
-
-    if (!valor) {
-        throw new Error(`No se encontró el campo ${campo} en el JSON`);
-    }
-
-    const textoLimpio = limpiarTextoActualizacion(valor);
-    const fecha = convertirAFecha(
-        { v: textoLimpio },
-        textoLimpio
-    );
-
-    return {
-        valor: textoLimpio,
-        hoja: "JSON",
-        fecha
-    };
-}
-
-async function leerActualizacionJSON(archivo) {
-    const datos = await descargarArchivo(archivo.url);
-    const texto = new TextDecoder("utf-8").decode(datos);
-    const contenido = JSON.parse(texto);
-
-    return extraerActualizadoJSON(contenido, archivo);
-}
-
-async function leerActualizacion(archivo) {
-    if (archivo.tipo === "json") {
-        return leerActualizacionJSON(archivo);
-    }
-
-    const datos = await descargarArchivo(archivo.url);
-
-    const libro = XLSX.read(datos, {
-        type: "array",
-        cellDates: true,
-        cellNF: true,
-        cellText: true
-    });
-
-    return leerCeldaExacta(libro, archivo);
-}
-
-async function actualizar() {
-    boton.disabled = true;
-    mostrarCargando();
-
-    const resultados = await Promise.all(
-        archivos.map(async archivo => {
-            try {
-                const resultado = await leerActualizacion(archivo);
-
-                return {
-                    archivo,
-                    resultado,
-                    error: null
-                };
-            } catch (error) {
-                return {
-                    archivo,
-                    resultado: null,
-                    error: error.message
-                };
-            }
-        })
-    );
-
-    const resultadosOrdenados = resultados
-        .map(item => {
-            if (item.error) {
-                return {
-                    ...item,
-                    estado: null,
-                    orden: Number.POSITIVE_INFINITY
-                };
-            }
-
-            const estado = calcularHaceCuanto(
-                item.resultado.fecha,
-                item.archivo.limiteMinutos
+        if (!respuestaProxy.ok) {
+            throw new Error(
+                `No se pudo consultar UltimoGuardado.json. ` +
+                `Directo: ${errorDirecto.message}. ` +
+                `Proxy: HTTP ${respuestaProxy.status}`
             );
+        }
 
-            return {
-                ...item,
-                estado,
-                orden: estado.minutosOrden
-            };
-        })
-        .sort((a, b) => a.orden - b.orden);
+        return await respuestaProxy.json();
+    }
+}
 
-    tabla.innerHTML = resultadosOrdenados.map(item => {
-        if (item.error) {
+
+/* ==========================================================
+   RENDER
+   ========================================================== */
+
+function renderizar(datos) {
+
+    if (!datos || !Array.isArray(datos.archivos)) {
+        throw new Error("UltimoGuardado.json no contiene el arreglo 'archivos'.");
+    }
+
+    const resultados = datos.archivos.map(item => {
+
+        const fecha = convertirFechaISO(item.actualizado);
+
+        const limite =
+            Object.prototype.hasOwnProperty.call(LIMITES, item.nombre)
+                ? LIMITES[item.nombre]
+                : item.limiteMinutos;
+
+        const estado =
+            item.estadoLectura === "OK"
+                ? calcularHaceCuanto(fecha, limite)
+                : {
+                    texto: "Error",
+                    clase: "estado-gris",
+                    minutosOrden: Number.POSITIVE_INFINITY
+                };
+
+        return {
+            ...item,
+            fecha,
+            limite,
+            estado
+        };
+    });
+
+
+    /*
+       Igual que el dashboard anterior:
+       los datos más recientes aparecen primero.
+    */
+    resultados.sort(
+        (a, b) =>
+            a.estado.minutosOrden -
+            b.estado.minutosOrden
+    );
+
+
+    tabla.innerHTML = resultados.map(item => {
+
+        if (item.estadoLectura !== "OK") {
+
             return `
                 <tr>
-                    <td class="archivo">${escapar(item.archivo.nombre)}</td>
-                    <td class="error">${escapar(item.error)}</td>
+                    <td class="archivo">
+                        ${escapar(item.nombre)}
+                    </td>
+
+                    <td class="error">
+                        ${escapar(item.error || "Error de lectura")}
+                    </td>
                 </tr>
             `;
         }
 
+
+        const fechaTexto =
+            item.fecha
+                ? formatearFechaArchivo(item.fecha)
+                : "Fecha no reconocida";
+
+
         return `
             <tr>
-                <td class="archivo">${escapar(item.archivo.nombre)}</td>
+
+                <td class="archivo">
+                    ${escapar(item.nombre)}
+                </td>
+
                 <td class="hace">
+
                     <span class="estado ${item.estado.clase}">
                         ${escapar(item.estado.texto)}
                     </span>
-                    <div style="margin-top:6px;font-size:12px;font-weight:400;color:#667085;">
-                        ${escapar(item.resultado.valor)}
+
+                    <div class="detalle">
+                        ${escapar(fechaTexto)}
                     </div>
+
+                </td>
+
+            </tr>
+        `;
+
+    }).join("");
+
+
+    const ahora = new Date();
+
+    let textoConsulta =
+        "Última consulta: " +
+        formatearFechaConsulta(ahora);
+
+
+    if (datos.generado) {
+
+        const fechaGenerado =
+            convertirFechaISO(datos.generado);
+
+        if (fechaGenerado) {
+
+            textoConsulta +=
+                " · JSON generado: " +
+                formatearFechaConsulta(fechaGenerado);
+
+        }
+
+    }
+
+
+    consulta.textContent = textoConsulta;
+}
+
+
+/* ==========================================================
+   ACTUALIZAR
+   ========================================================== */
+
+async function actualizar() {
+
+    boton.disabled = true;
+
+    mostrarCargando();
+
+
+    try {
+
+        const datos =
+            await descargarUltimoGuardado();
+
+        renderizar(datos);
+
+    } catch (error) {
+
+        tabla.innerHTML = `
+            <tr>
+                <td class="archivo">
+                    ULTIMO GUARDADO
+                </td>
+                <td class="error">
+                    ${escapar(error.message)}
                 </td>
             </tr>
         `;
-    }).join("");
 
-    consulta.textContent = "Última consulta: " + fechaConsulta();
-    boton.disabled = false;
+        consulta.textContent =
+            "Última consulta fallida: " +
+            formatearFechaConsulta(new Date());
+
+    } finally {
+
+        boton.disabled = false;
+
+    }
+
 }
+
+
+/* ==========================================================
+   INICIO
+   ========================================================== */
 
 boton.addEventListener("click", actualizar);
 
 actualizar();
+
+/* Actualización automática cada 5 minutos */
 setInterval(actualizar, 5 * 60 * 1000);
+
 </script>
+
 </body>
 </html>
