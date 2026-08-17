@@ -29,11 +29,12 @@ h1{margin:0;font-size:32px}.sub{margin-top:7px;color:var(--muted);font-size:13px
 const FUENTES=[
 {nombre:"AGREGAR CONDUCTORES A REMITO SP",url:"https://dl.dropbox.com/scl/fi/i3jl55qidljw8ex74tbvf/AgregarConductoresRemitoSP.json?rlkey=k34tc8hbz4kfweuvg01cxypdp&dl=1"},
 {nombre:"CONSULTAS SISTEMA",url:"https://dl.dropbox.com/scl/fi/v165fuiec8av7q8l6ntyh/ConsultasSistema.json?rlkey=3yip9f9dmy7j56d8l7mvr0wul&dl=1"},
-{nombre:"DATOS ARCGIS",url:"https://dl.dropbox.com/scl/fi/z2y0ojao8niahmtk525jc/DatosArcGIS.json?rlkey=kh8pobprt7hw0pwe7xrhru7ma&dl=1"},
-{nombre:"MEDICIONES",url:"https://dl.dropbox.com/scl/fi/ri23xu428izh29irawrvr/Mediciones.json?rlkey=54u6a72489nu5qejnqwb9jw91&dl=1"},
+{nombre:"MEDICIONES PLANTA",url:"https://dl.dropbox.com/scl/fi/ri23xu428izh29irawrvr/Mediciones.json?rlkey=54u6a72489nu5qejnqwb9jw91&dl=1"},
+{nombre:"PILAS Online",url:"https://dl.dropbox.com/scl/fi/bx7bxqkh2f3dmwu5664ba/PilasOnline.json?rlkey=cxgums4j1z2pj8jkz0w7a9zmh&dl=1"},
+{nombre:"ESTADO REMITOS",url:"https://dl.dropbox.com/scl/fi/eo971dn4yrjz5h71qkh2b/EstadoDescargaRemitos.json?rlkey=j5udth4t07t8vpaoyqel87j93&dl=1"},
 {nombre:"PLANILLA",url:"https://dl.dropbox.com/scl/fi/ync2zyrj5tnkzba9bko6h/PLANILLA.json?rlkey=kft3r15zhgdq2vbqbzs0nsgfc&dl=1"},
 {nombre:"PLANILLA JAUSER",url:"https://dl.dropbox.com/scl/fi/9e8mjzpmasxn781f3tr1s/PlanillaJauser.json?rlkey=h9ugbe1k5blfuid0q9ey06apx&dl=1"},
-{nombre:"TABLERO PREDIO",url:"https://dl.dropbox.com/scl/fi/utpw7rrrzvbm0bimeptdw/TableroPredio.json?rlkey=wuh2g2zkv8gfqx30lezitlfpx&dl=1"}
+{nombre:"TABLERO ArcGis",url:"https://dl.dropbox.com/scl/fi/utpw7rrrzvbm0bimeptdw/TableroPredio.json?rlkey=wuh2g2zkv8gfqx30lezitlfpx&dl=1"}
 ];
 const INTERVALO=5*60*1000;
 const grid=document.getElementById("grid"),estadoGeneral=document.getElementById("estadoGeneral"),ultimaConsulta=document.getElementById("ultimaConsulta");
@@ -70,13 +71,23 @@ async function leerFuente(f){
   const a=buscarActualizado(d);
   if(!a)return{nombre:f.nombre,estado:"error",fecha:null,fechaOrden:0,detalle:'No se encontró el campo "actualizado"'};
 
-  const fechaParseada = new Date(
-      String(a)
-          .trim()
-          .replace(/^Actualizado:\\s*/i,"")
-          .replace(/^Act\\.\\s*/i,"")
-          .trim()
-  );
+  let textoFecha=String(a).trim().replace(/^Actualizado:\s*/i,"").replace(/^Act\.\s*/i,"").trim();
+  let fechaParseada=new Date(textoFecha);
+
+  // Compatibilidad adicional con dd/mm/yyyy hh:mm
+  if(Number.isNaN(fechaParseada.getTime())){
+      const m=textoFecha.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+      if(m){
+          fechaParseada=new Date(
+              Number(m[3]),
+              Number(m[2])-1,
+              Number(m[1]),
+              Number(m[4]||0),
+              Number(m[5]||0),
+              Number(m[6]||0)
+          );
+      }
+  }
 
   return{
       nombre:f.nombre,
@@ -96,10 +107,11 @@ async function cargar(){
  estadoGeneral.textContent="Actualizando…";
  let r=await Promise.all(FUENTES.map(leerFuente));
 
+ // Orden cronológico: fecha/hora más antigua -> más reciente.
  r.sort((a,b)=>{
      if(a.estado==="ok" && b.estado!=="ok") return -1;
      if(a.estado!=="ok" && b.estado==="ok") return 1;
-     return (b.fechaOrden||0) - (a.fechaOrden||0);
+     return (a.fechaOrden||0) - (b.fechaOrden||0);
  });
 
  render(r);
