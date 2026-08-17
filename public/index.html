@@ -1,572 +1,641 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Última actualización</title>
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Control de Actualizaciones</title>
+
 
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #f3f5f7;
-        color: #202630;
+
+:root {
+
+    --bg: #07111f;
+
+    --panel: #0d1b2d;
+
+    --panel2: #11243a;
+
+    --border: rgba(148,163,184,.18);
+
+    --text: #e8eef7;
+
+    --muted: #94a3b8;
+
+    --green: #22c55e;
+
+    --red: #ef4444;
+
+    --yellow: #f59e0b;
+
+    --blue: #38bdf8;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(56,189,248,.08),
+            transparent 30%
+        ),
+        var(--bg);
+
+    color: var(--text);
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+
+.dashboard {
+
+    width: min(1200px, 100%);
+
+    margin: auto;
+
+    padding: 24px;
+}
+
+
+.header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+
+h1 {
+
+    margin: 0;
+
+    font-size: 32px;
+
+    letter-spacing: -.5px;
+}
+
+
+.subtitulo {
+
+    margin-top: 7px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+.estado-general {
+
+    padding: 9px 14px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 999px;
+
+    background: var(--panel);
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+
+.grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(300px, 1fr)
+        );
+
+    gap: 14px;
+}
+
+
+.card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 18px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(17,36,58,.98),
+            rgba(13,27,45,.98)
+        );
+}
+
+
+.card::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 4px;
+
+    background: var(--yellow);
+}
+
+
+.card.ok::before {
+    background: var(--green);
+}
+
+
+.card.error::before {
+    background: var(--red);
+}
+
+
+.nombre {
+
+    margin-bottom: 13px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: .6px;
+}
+
+
+.fecha {
+
+    font-size: 19px;
+
+    font-weight: 750;
+}
+
+
+.detalle {
+
+    margin-top: 8px;
+
+    min-height: 16px;
+
+    color: var(--muted);
+
+    font-size: 10px;
+}
+
+
+.footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 20px;
+
+    color: var(--muted);
+
+    font-size: 10px;
+}
+
+
+@media (max-width: 650px) {
+
+    .dashboard {
+        padding: 12px;
     }
 
-    .contenedor {
-        max-width: 960px;
-        margin: 35px auto;
-        padding: 0 18px;
+
+    .header {
+
+        display: block;
+
+        margin-bottom: 15px;
     }
+
 
     h1 {
-        margin: 0 0 8px;
-        font-size: 27px;
+
+        font-size: 24px;
     }
 
-    .subtitulo {
-        margin: 0 0 22px;
-        color: #657080;
-    }
 
-    .panel {
-        background: #ffffff;
-        border: 1px solid #d9dee5;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, .06);
-    }
+    .estado-general {
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th, td {
-        padding: 14px 16px;
-        text-align: left;
-        border-bottom: 1px solid #e7ebef;
-    }
-
-    th {
-        background: #eaf0f6;
-        font-size: 14px;
-    }
-
-    tbody tr:last-child td {
-        border-bottom: 0;
-    }
-
-    .archivo {
-        font-weight: 700;
-    }
-
-    .hace {
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    .estado {
         display: inline-block;
-        min-width: 110px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        text-align: center;
-        font-weight: 700;
+
+        margin-top: 10px;
     }
 
-    .estado-verde {
-        background: #dcfce7;
-        color: #166534;
+
+    .grid {
+
+        grid-template-columns: 1fr;
     }
 
-    .estado-rojo {
-        background: #fee2e2;
-        color: #991b1b;
+
+    .fecha {
+
+        font-size: 17px;
     }
 
-    .estado-gris {
-        background: #e5e7eb;
-        color: #374151;
+
+    .footer {
+
+        display: block;
     }
 
-    .cargando {
-        color: #667085;
-    }
+}
 
-    .error {
-        color: #b42318;
-        font-weight: 700;
-    }
-
-    .detalle {
-        margin-top: 6px;
-        font-size: 12px;
-        font-weight: 400;
-        color: #667085;
-    }
-
-    .barra {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 16px;
-        margin-top: 16px;
-        flex-wrap: wrap;
-    }
-
-    #consulta {
-        color: #667085;
-        font-size: 13px;
-    }
-
-    button {
-        border: 0;
-        border-radius: 8px;
-        padding: 11px 18px;
-        background: #0061ff;
-        color: white;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-    button:disabled {
-        opacity: .6;
-        cursor: wait;
-    }
-
-    @media (max-width: 680px) {
-        .contenedor {
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 11px 9px;
-        }
-    }
 </style>
+
 </head>
+
 
 <body>
 
-<div class="contenedor">
 
-    <h1>Última actualización</h1>
+<main class="dashboard">
 
-    <p class="subtitulo">
-        Estado consolidado de las fuentes de datos.
-    </p>
 
-    <div class="panel">
-        <table>
-            <thead>
-                <tr>
-                    <th>Archivo</th>
-                    <th>Hace cuánto</th>
-                </tr>
-            </thead>
-            <tbody id="tabla"></tbody>
-        </table>
+<header class="header">
+
+    <div>
+
+        <h1>Control de Actualizaciones</h1>
+
+        <div class="subtitulo">
+            Estado de actualización de sistemas
+        </div>
+
     </div>
 
-    <div class="barra">
-        <span id="consulta"></span>
-        <button id="actualizar" type="button">Actualizar ahora</button>
+
+    <div
+        id="estadoGeneral"
+        class="estado-general"
+    >
+        Cargando...
     </div>
+
+</header>
+
+
+
+<section
+    id="grid"
+    class="grid"
+>
+</section>
+
+
+
+<div class="footer">
+
+    <span id="ultimaConsulta">
+        Última consulta: —
+    </span>
+
+    <span>
+        Actualización automática cada 5 minutos
+    </span>
 
 </div>
 
+
+</main>
+
+
 <script>
 
-/* ==========================================================
-   CONFIGURACIÓN
-   ========================================================== */
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
 
-const URL_ULTIMO_GUARDADO =
-    "https://dl.dropbox.com/scl/fi/9ts4dhfsqh6lhi49kdvf2/UltimoGuardado.json?rlkey=j4t4r35xlorh62pzrknxbwynw&dl=1";
+const API_URL = "/api/estado";
 
-/*
-   Conservamos los límites individuales que tenía el dashboard.
-   Si aparece una fuente nueva que no esté aquí, se usa el
-   limiteMinutos del propio UltimoGuardado.json.
-*/
-const LIMITES = {
-    "DATOS ARCGIS": 90,
-    "ENVÍO DE CORREOS": 10,
-    "DESCARGA POLO": 15,
-    "MUESTRAS ONLINE": 35,
-    "PILAS ONLINE": 35,
-    "CONSULTAS SISTEMA": 10,
-    "PLANILLA JAUSER": 15,
-    "PLANILLA": 15,
-    "AGREGAR CONDUCTORES A REMITO SP": 15
-};
-
-const tabla = document.getElementById("tabla");
-const boton = document.getElementById("actualizar");
-const consulta = document.getElementById("consulta");
+const INTERVALO =
+    5 * 60 * 1000;
 
 
-/* ==========================================================
-   UTILIDADES
-   ========================================================== */
+// ============================================================
+// ELEMENTOS
+// ============================================================
 
-function escapar(texto) {
-    return String(texto ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;");
-}
+const grid =
+    document.getElementById("grid");
 
+const estadoGeneral =
+    document.getElementById("estadoGeneral");
 
-function formatearFechaConsulta(fecha) {
-    return new Intl.DateTimeFormat("es-UY", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false
-    }).format(fecha);
-}
+const ultimaConsulta =
+    document.getElementById("ultimaConsulta");
 
 
-function formatearFechaArchivo(fecha) {
-    return new Intl.DateTimeFormat("es-UY", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-    }).format(fecha);
-}
+// ============================================================
+// FORMATO FECHA
+// ============================================================
 
+function formatearFecha(valor) {
 
-function convertirFechaISO(valor) {
-
-    if (!valor) return null;
-
-    const fecha = new Date(valor);
-
-    if (Number.isNaN(fecha.getTime())) {
-        return null;
+    if (!valor) {
+        return "Sin información";
     }
 
-    return fecha;
+
+    // Intentar convertir fecha ISO.
+
+    const fecha =
+        new Date(valor);
+
+
+    if (!Number.isNaN(fecha.getTime())) {
+
+        return new Intl.DateTimeFormat(
+            "es-UY",
+            {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+
+                hour: "2-digit",
+                minute: "2-digit",
+
+                hour12: false
+            }
+        ).format(fecha);
+    }
+
+
+    // Si ya viene como texto:
+    // "Actualizado: 17/08/2026 15:30"
+
+    return String(valor)
+        .replace(/^Actualizado:\s*/i, "")
+        .trim();
 }
 
 
-function calcularHaceCuanto(fecha, limiteMinutos) {
+// ============================================================
+// CARGAR DATOS
+// ============================================================
 
-    if (!(fecha instanceof Date) || Number.isNaN(fecha.getTime())) {
-        return {
-            texto: "Fecha no reconocida",
-            clase: "estado-gris",
-            minutosOrden: Number.POSITIVE_INFINITY
-        };
-    }
+async function cargarDatos() {
 
-    let diferencia = Date.now() - fecha.getTime();
-
-    const futuro = diferencia < 0;
-
-    diferencia = Math.abs(diferencia);
-
-    const minutosTotales = Math.floor(diferencia / 60000);
-
-    const dias = Math.floor(minutosTotales / 1440);
-    const horas = Math.floor((minutosTotales % 1440) / 60);
-    const minutos = minutosTotales % 60;
-
-    let detalle;
-
-    if (minutosTotales < 1) {
-        detalle = "1 min";
-    } else if (dias > 0) {
-        detalle = `${dias} d ${horas} h`;
-    } else if (horas > 0) {
-        detalle = `${horas} h ${minutos} min`;
-    } else {
-        detalle = `${minutos} min`;
-    }
-
-    let clase = "estado-verde";
-
-    if (futuro) {
-        clase = "estado-gris";
-    } else if (
-        limiteMinutos !== null &&
-        limiteMinutos !== undefined &&
-        minutosTotales > limiteMinutos
-    ) {
-        clase = "estado-rojo";
-    }
-
-    return {
-        texto: futuro ? `en ${detalle}` : `hace ${detalle}`,
-        clase,
-        minutosOrden: futuro ? -minutosTotales : minutosTotales
-    };
-}
+    estadoGeneral.textContent =
+        "Actualizando...";
 
 
-function mostrarCargando() {
-
-    tabla.innerHTML = `
-        <tr>
-            <td class="archivo">ULTIMO GUARDADO</td>
-            <td class="cargando">Consultando…</td>
-        </tr>
-    `;
-
-}
-
-
-/* ==========================================================
-   DESCARGA ÚNICA
-   ========================================================== */
-
-async function descargarUltimoGuardado() {
-
-    const separador = URL_ULTIMO_GUARDADO.includes("?") ? "&" : "?";
-
-    const url =
-        URL_ULTIMO_GUARDADO +
-        separador +
-        "_=" +
-        Date.now();
-
-    /*
-       Primer intento: Dropbox directo.
-       Es la ruta normal y la más rápida.
-    */
     try {
 
-        const respuesta = await fetch(url, {
-            method: "GET",
-            cache: "no-store",
-            redirect: "follow"
-        });
+        const respuesta =
+            await fetch(
+                `${API_URL}?t=${Date.now()}`,
+                {
+                    cache: "no-store"
+                }
+            );
+
 
         if (!respuesta.ok) {
-            throw new Error(`HTTP ${respuesta.status}`);
-        }
 
-        return await respuesta.json();
-
-    } catch (errorDirecto) {
-
-        /*
-           Fallback únicamente si el navegador bloquea Dropbox
-           por CORS. Sigue siendo UN SOLO archivo JSON, no los
-           9 archivos originales.
-        */
-
-        const proxy =
-            "https://corsproxy.io/?" +
-            encodeURIComponent(url);
-
-        const respuestaProxy = await fetch(proxy, {
-            method: "GET",
-            cache: "no-store"
-        });
-
-        if (!respuestaProxy.ok) {
             throw new Error(
-                `No se pudo consultar UltimoGuardado.json. ` +
-                `Directo: ${errorDirecto.message}. ` +
-                `Proxy: HTTP ${respuestaProxy.status}`
+                `HTTP ${respuesta.status}`
             );
         }
 
-        return await respuestaProxy.json();
-    }
-}
-
-
-/* ==========================================================
-   RENDER
-   ========================================================== */
-
-function renderizar(datos) {
-
-    if (!datos || !Array.isArray(datos.archivos)) {
-        throw new Error("UltimoGuardado.json no contiene el arreglo 'archivos'.");
-    }
-
-    const resultados = datos.archivos.map(item => {
-
-        const fecha = convertirFechaISO(item.actualizado);
-
-        const limite =
-            Object.prototype.hasOwnProperty.call(LIMITES, item.nombre)
-                ? LIMITES[item.nombre]
-                : item.limiteMinutos;
-
-        const estado =
-            item.estadoLectura === "OK"
-                ? calcularHaceCuanto(fecha, limite)
-                : {
-                    texto: "Error",
-                    clase: "estado-gris",
-                    minutosOrden: Number.POSITIVE_INFINITY
-                };
-
-        return {
-            ...item,
-            fecha,
-            limite,
-            estado
-        };
-    });
-
-
-    /*
-       Igual que el dashboard anterior:
-       los datos más recientes aparecen primero.
-    */
-    resultados.sort(
-        (a, b) =>
-            a.estado.minutosOrden -
-            b.estado.minutosOrden
-    );
-
-
-    tabla.innerHTML = resultados.map(item => {
-
-        if (item.estadoLectura !== "OK") {
-
-            return `
-                <tr>
-                    <td class="archivo">
-                        ${escapar(item.nombre)}
-                    </td>
-
-                    <td class="error">
-                        ${escapar(item.error || "Error de lectura")}
-                    </td>
-                </tr>
-            `;
-        }
-
-
-        const fechaTexto =
-            item.fecha
-                ? formatearFechaArchivo(item.fecha)
-                : "Fecha no reconocida";
-
-
-        return `
-            <tr>
-
-                <td class="archivo">
-                    ${escapar(item.nombre)}
-                </td>
-
-                <td class="hace">
-
-                    <span class="estado ${item.estado.clase}">
-                        ${escapar(item.estado.texto)}
-                    </span>
-
-                    <div class="detalle">
-                        ${escapar(fechaTexto)}
-                    </div>
-
-                </td>
-
-            </tr>
-        `;
-
-    }).join("");
-
-
-    const ahora = new Date();
-
-    let textoConsulta =
-        "Última consulta: " +
-        formatearFechaConsulta(ahora);
-
-
-    if (datos.generado) {
-
-        const fechaGenerado =
-            convertirFechaISO(datos.generado);
-
-        if (fechaGenerado) {
-
-            textoConsulta +=
-                " · JSON generado: " +
-                formatearFechaConsulta(fechaGenerado);
-
-        }
-
-    }
-
-
-    consulta.textContent = textoConsulta;
-}
-
-
-/* ==========================================================
-   ACTUALIZAR
-   ========================================================== */
-
-async function actualizar() {
-
-    boton.disabled = true;
-
-    mostrarCargando();
-
-
-    try {
 
         const datos =
-            await descargarUltimoGuardado();
+            await respuesta.json();
 
-        renderizar(datos);
+
+        if (!Array.isArray(datos.archivos)) {
+
+            throw new Error(
+                "Respuesta API incorrecta"
+            );
+        }
+
+
+        renderizar(datos.archivos);
+
+
+        const errores =
+            datos.archivos.filter(
+                item =>
+                    item.estado !== "OK"
+            ).length;
+
+
+        if (errores === 0) {
+
+            estadoGeneral.textContent =
+                "Todos en línea";
+
+        } else {
+
+            estadoGeneral.textContent =
+                `${errores} con observaciones`;
+        }
+
+
+        ultimaConsulta.textContent =
+            "Última consulta: " +
+            new Intl.DateTimeFormat(
+                "es-UY",
+                {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+
+                    hour: "2-digit",
+                    minute: "2-digit",
+
+                    hour12: false
+                }
+            ).format(
+                new Date()
+            );
+
 
     } catch (error) {
 
-        tabla.innerHTML = `
-            <tr>
-                <td class="archivo">
-                    ULTIMO GUARDADO
-                </td>
-                <td class="error">
-                    ${escapar(error.message)}
-                </td>
-            </tr>
+        console.error(error);
+
+
+        estadoGeneral.textContent =
+            "Error de conexión";
+
+
+        grid.innerHTML = `
+
+            <article class="card error">
+
+                <div class="nombre">
+                    ERROR
+                </div>
+
+                <div class="fecha">
+                    No fue posible cargar los datos
+                </div>
+
+                <div class="detalle">
+                    ${escapeHtml(error.message)}
+                </div>
+
+            </article>
+
         `;
-
-        consulta.textContent =
-            "Última consulta fallida: " +
-            formatearFechaConsulta(new Date());
-
-    } finally {
-
-        boton.disabled = false;
-
     }
-
 }
 
 
-/* ==========================================================
-   INICIO
-   ========================================================== */
+// ============================================================
+// RENDER
+// ============================================================
 
-boton.addEventListener("click", actualizar);
+function renderizar(archivos) {
 
-actualizar();
+    grid.innerHTML =
+        archivos.map(item => {
 
-/* Actualización automática cada 5 minutos */
-setInterval(actualizar, 5 * 60 * 1000);
+            const clase =
+                item.estado === "OK"
+                    ? "ok"
+                    : "error";
+
+
+            const fecha =
+                item.estado === "OK"
+                    ? "Actualizado: " +
+                      formatearFecha(
+                          item.actualizado
+                      )
+                    : "Sin actualización";
+
+
+            return `
+
+                <article
+                    class="card ${clase}"
+                >
+
+                    <div class="nombre">
+                        ${escapeHtml(item.nombre)}
+                    </div>
+
+                    <div class="fecha">
+                        ${escapeHtml(fecha)}
+                    </div>
+
+                    <div class="detalle">
+                        ${
+                            item.detalle
+                                ? escapeHtml(
+                                    item.detalle
+                                  )
+                                : "&nbsp;"
+                        }
+                    </div>
+
+                </article>
+
+            `;
+
+        }).join("");
+}
+
+
+// ============================================================
+// SEGURIDAD HTML
+// ============================================================
+
+function escapeHtml(valor) {
+
+    return String(valor)
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+}
+
+
+// ============================================================
+// INICIO
+// ============================================================
+
+cargarDatos();
+
+setInterval(
+    cargarDatos,
+    INTERVALO
+);
 
 </script>
 
+
 </body>
+
 </html>
