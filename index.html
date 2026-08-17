@@ -1,641 +1,92 @@
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Control de Actualizaciones</title>
-
-
 <style>
-
-:root {
-
-    --bg: #07111f;
-
-    --panel: #0d1b2d;
-
-    --panel2: #11243a;
-
-    --border: rgba(148,163,184,.18);
-
-    --text: #e8eef7;
-
-    --muted: #94a3b8;
-
-    --green: #22c55e;
-
-    --red: #ef4444;
-
-    --yellow: #f59e0b;
-
-    --blue: #38bdf8;
-}
-
-
-* {
-    box-sizing: border-box;
-}
-
-
-body {
-
-    margin: 0;
-
-    min-height: 100vh;
-
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(56,189,248,.08),
-            transparent 30%
-        ),
-        var(--bg);
-
-    color: var(--text);
-
-    font-family:
-        Inter,
-        "Segoe UI",
-        Arial,
-        sans-serif;
-}
-
-
-.dashboard {
-
-    width: min(1200px, 100%);
-
-    margin: auto;
-
-    padding: 24px;
-}
-
-
-.header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 20px;
-
-    margin-bottom: 22px;
-}
-
-
-h1 {
-
-    margin: 0;
-
-    font-size: 32px;
-
-    letter-spacing: -.5px;
-}
-
-
-.subtitulo {
-
-    margin-top: 7px;
-
-    color: var(--muted);
-
-    font-size: 13px;
-}
-
-
-.estado-general {
-
-    padding: 9px 14px;
-
-    border: 1px solid var(--border);
-
-    border-radius: 999px;
-
-    background: var(--panel);
-
-    color: var(--muted);
-
-    font-size: 12px;
-}
-
-
-.grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(300px, 1fr)
-        );
-
-    gap: 14px;
-}
-
-
-.card {
-
-    position: relative;
-
-    overflow: hidden;
-
-    padding: 18px;
-
-    border: 1px solid var(--border);
-
-    border-radius: 15px;
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(17,36,58,.98),
-            rgba(13,27,45,.98)
-        );
-}
-
-
-.card::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-
-    top: 0;
-
-    bottom: 0;
-
-    width: 4px;
-
-    background: var(--yellow);
-}
-
-
-.card.ok::before {
-    background: var(--green);
-}
-
-
-.card.error::before {
-    background: var(--red);
-}
-
-
-.nombre {
-
-    margin-bottom: 13px;
-
-    color: var(--muted);
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    letter-spacing: .6px;
-}
-
-
-.fecha {
-
-    font-size: 19px;
-
-    font-weight: 750;
-}
-
-
-.detalle {
-
-    margin-top: 8px;
-
-    min-height: 16px;
-
-    color: var(--muted);
-
-    font-size: 10px;
-}
-
-
-.footer {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    margin-top: 20px;
-
-    color: var(--muted);
-
-    font-size: 10px;
-}
-
-
-@media (max-width: 650px) {
-
-    .dashboard {
-        padding: 12px;
-    }
-
-
-    .header {
-
-        display: block;
-
-        margin-bottom: 15px;
-    }
-
-
-    h1 {
-
-        font-size: 24px;
-    }
-
-
-    .estado-general {
-
-        display: inline-block;
-
-        margin-top: 10px;
-    }
-
-
-    .grid {
-
-        grid-template-columns: 1fr;
-    }
-
-
-    .fecha {
-
-        font-size: 17px;
-    }
-
-
-    .footer {
-
-        display: block;
-    }
-
-}
-
+:root{--bg:#07111f;--panel:#0d1b2d;--border:rgba(148,163,184,.18);--text:#e8eef7;--muted:#94a3b8;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif}
+.dashboard{width:min(1250px,100%);margin:auto;padding:24px}.header{display:flex;justify-content:space-between;gap:20px;margin-bottom:20px}
+h1{margin:0;font-size:32px}.sub{margin-top:7px;color:var(--muted);font-size:13px}.status{padding:9px 13px;border:1px solid var(--border);border-radius:999px;background:var(--panel);color:var(--muted);font-size:12px;height:max-content}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(280px,1fr));gap:14px}.card{position:relative;padding:18px 18px 17px 21px;border:1px solid var(--border);border-radius:16px;background:linear-gradient(180deg,rgba(17,36,58,.98),rgba(13,27,45,.98))}
+.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--yellow)}.card.ok:before{background:var(--green)}.card.error:before{background:var(--red)}
+.nombre{color:#cbd5e1;font-size:12px;font-weight:800;letter-spacing:.55px;text-transform:uppercase}.fecha{margin-top:15px;font-size:20px;font-weight:800}.detalle{margin-top:9px;color:var(--muted);font-size:10px}
+.footer{display:flex;justify-content:space-between;gap:16px;margin-top:18px;color:var(--muted);font-size:10px}
+@media(max-width:760px){.dashboard{padding:12px}.header{display:block}.status{display:inline-block;margin-top:10px}.grid{grid-template-columns:1fr}.fecha{font-size:17px}.footer{display:block}}
 </style>
-
 </head>
-
-
 <body>
-
-
 <main class="dashboard">
-
-
 <header class="header">
-
-    <div>
-
-        <h1>Control de Actualizaciones</h1>
-
-        <div class="subtitulo">
-            Estado de actualización de sistemas
-        </div>
-
-    </div>
-
-
-    <div
-        id="estadoGeneral"
-        class="estado-general"
-    >
-        Cargando...
-    </div>
-
+<div><h1>Control de Actualizaciones</h1><div class="sub">Lectura directa de archivos JSON desde Dropbox</div></div>
+<div id="estadoGeneral" class="status">Cargando datos…</div>
 </header>
-
-
-
-<section
-    id="grid"
-    class="grid"
->
-</section>
-
-
-
-<div class="footer">
-
-    <span id="ultimaConsulta">
-        Última consulta: —
-    </span>
-
-    <span>
-        Actualización automática cada 5 minutos
-    </span>
-
-</div>
-
-
+<section id="grid" class="grid"></section>
+<div class="footer"><span id="ultimaConsulta">Última consulta: —</span><span>Actualización automática cada 5 minutos</span></div>
 </main>
-
-
 <script>
+const FUENTES=[
+{nombre:"AGREGAR CONDUCTORES A REMITO SP",url:"https://dl.dropbox.com/scl/fi/i3jl55qidljw8ex74tbvf/AgregarConductoresRemitoSP.json?rlkey=k34tc8hbz4kfweuvg01cxypdp&dl=1"},
+{nombre:"CONSULTAS SISTEMA",url:"https://dl.dropbox.com/scl/fi/v165fuiec8av7q8l6ntyh/ConsultasSistema.json?rlkey=3yip9f9dmy7j56d8l7mvr0wul&dl=1"},
+{nombre:"DATOS ARCGIS",url:"https://dl.dropbox.com/scl/fi/z2y0ojao8niahmtk525jc/DatosArcGIS.json?rlkey=kh8pobprt7hw0pwe7xrhru7ma&dl=1"},
+{nombre:"MEDICIONES",url:"https://dl.dropbox.com/scl/fi/ri23xu428izh29irawrvr/Mediciones.json?rlkey=54u6a72489nu5qejnqwb9jw91&dl=1"},
+{nombre:"PLANILLA",url:"https://dl.dropbox.com/scl/fi/ync2zyrj5tnkzba9bko6h/PLANILLA.json?rlkey=kft3r15zhgdq2vbqbzs0nsgfc&dl=1"},
+{nombre:"PLANILLA JAUSER",url:"https://dl.dropbox.com/scl/fi/9e8mjzpmasxn781f3tr1s/PlanillaJauser.json?rlkey=h9ugbe1k5blfuid0q9ey06apx&dl=1"},
+{nombre:"TABLERO PREDIO",url:"https://dl.dropbox.com/scl/fi/utpw7rrrzvbm0bimeptdw/TableroPredio.json?rlkey=wuh2g2zkv8gfqx30lezitlfpx&dl=1"}
+];
+const INTERVALO=5*60*1000;
+const grid=document.getElementById("grid"),estadoGeneral=document.getElementById("estadoGeneral"),ultimaConsulta=document.getElementById("ultimaConsulta");
 
-// ============================================================
-// CONFIGURACIÓN
-// ============================================================
+function esc(v){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
 
-const API_URL = "/api/estado";
-
-const INTERVALO =
-    5 * 60 * 1000;
-
-
-// ============================================================
-// ELEMENTOS
-// ============================================================
-
-const grid =
-    document.getElementById("grid");
-
-const estadoGeneral =
-    document.getElementById("estadoGeneral");
-
-const ultimaConsulta =
-    document.getElementById("ultimaConsulta");
-
-
-// ============================================================
-// FORMATO FECHA
-// ============================================================
-
-function formatearFecha(valor) {
-
-    if (!valor) {
-        return "Sin información";
-    }
-
-
-    // Intentar convertir fecha ISO.
-
-    const fecha =
-        new Date(valor);
-
-
-    if (!Number.isNaN(fecha.getTime())) {
-
-        return new Intl.DateTimeFormat(
-            "es-UY",
-            {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-
-                hour: "2-digit",
-                minute: "2-digit",
-
-                hour12: false
-            }
-        ).format(fecha);
-    }
-
-
-    // Si ya viene como texto:
-    // "Actualizado: 17/08/2026 15:30"
-
-    return String(valor)
-        .replace(/^Actualizado:\s*/i, "")
-        .trim();
+function buscarActualizado(d,p=0){
+ if(d==null||p>5)return null;
+ if(typeof d==="object"&&!Array.isArray(d)){
+  for(const c of ["actualizado","Actualizado","ACTUALIZADO","actualizacion","Actualizacion","ACTUALIZACION","fechaActualizacion","fecha_actualizacion","ultimaActualizacion","ultima_actualizacion","ultimoGuardado","ultimo_guardado"]){
+   if(Object.prototype.hasOwnProperty.call(d,c)&&d[c]!=null&&String(d[c]).trim()!=="")return String(d[c]).trim();
+  }
+  for(const v of Object.values(d)){if(v&&typeof v==="object"){const e=buscarActualizado(v,p+1);if(e)return e}}
+ }
+ if(Array.isArray(d)){for(const i of d.slice(0,30)){const e=buscarActualizado(i,p+1);if(e)return e}}
+ return null;
 }
 
-
-// ============================================================
-// CARGAR DATOS
-// ============================================================
-
-async function cargarDatos() {
-
-    estadoGeneral.textContent =
-        "Actualizando...";
-
-
-    try {
-
-        const respuesta =
-            await fetch(
-                `${API_URL}?t=${Date.now()}`,
-                {
-                    cache: "no-store"
-                }
-            );
-
-
-        if (!respuesta.ok) {
-
-            throw new Error(
-                `HTTP ${respuesta.status}`
-            );
-        }
-
-
-        const datos =
-            await respuesta.json();
-
-
-        if (!Array.isArray(datos.archivos)) {
-
-            throw new Error(
-                "Respuesta API incorrecta"
-            );
-        }
-
-
-        renderizar(datos.archivos);
-
-
-        const errores =
-            datos.archivos.filter(
-                item =>
-                    item.estado !== "OK"
-            ).length;
-
-
-        if (errores === 0) {
-
-            estadoGeneral.textContent =
-                "Todos en línea";
-
-        } else {
-
-            estadoGeneral.textContent =
-                `${errores} con observaciones`;
-        }
-
-
-        ultimaConsulta.textContent =
-            "Última consulta: " +
-            new Intl.DateTimeFormat(
-                "es-UY",
-                {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-
-                    hour: "2-digit",
-                    minute: "2-digit",
-
-                    hour12: false
-                }
-            ).format(
-                new Date()
-            );
-
-
-    } catch (error) {
-
-        console.error(error);
-
-
-        estadoGeneral.textContent =
-            "Error de conexión";
-
-
-        grid.innerHTML = `
-
-            <article class="card error">
-
-                <div class="nombre">
-                    ERROR
-                </div>
-
-                <div class="fecha">
-                    No fue posible cargar los datos
-                </div>
-
-                <div class="detalle">
-                    ${escapeHtml(error.message)}
-                </div>
-
-            </article>
-
-        `;
-    }
+function formatear(v){
+ if(!v)return null;
+ let t=String(v).trim().replace(/^Actualizado:\s*/i,"").replace(/^Act\.\s*/i,"").trim();
+ const f=new Date(t);
+ if(!Number.isNaN(f.getTime()))return new Intl.DateTimeFormat("es-UY",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(f);
+ return t;
 }
 
-
-// ============================================================
-// RENDER
-// ============================================================
-
-function renderizar(archivos) {
-
-    grid.innerHTML =
-        archivos.map(item => {
-
-            const clase =
-                item.estado === "OK"
-                    ? "ok"
-                    : "error";
-
-
-            const fecha =
-                item.estado === "OK"
-                    ? "Actualizado: " +
-                      formatearFecha(
-                          item.actualizado
-                      )
-                    : "Sin actualización";
-
-
-            return `
-
-                <article
-                    class="card ${clase}"
-                >
-
-                    <div class="nombre">
-                        ${escapeHtml(item.nombre)}
-                    </div>
-
-                    <div class="fecha">
-                        ${escapeHtml(fecha)}
-                    </div>
-
-                    <div class="detalle">
-                        ${
-                            item.detalle
-                                ? escapeHtml(
-                                    item.detalle
-                                  )
-                                : "&nbsp;"
-                        }
-                    </div>
-
-                </article>
-
-            `;
-
-        }).join("");
+async function leerFuente(f){
+ try{
+  const sep=f.url.includes("?")?"&":"?";
+  const r=await fetch(`${f.url}${sep}t=${Date.now()}`,{cache:"no-store"});
+  if(!r.ok)throw new Error(`HTTP ${r.status}`);
+  const txt=await r.text();
+  let d;try{d=JSON.parse(txt)}catch{throw new Error("JSON inválido")}
+  const a=buscarActualizado(d);
+  if(!a)return{nombre:f.nombre,estado:"error",fecha:null,detalle:'No se encontró el campo "actualizado"'};
+  return{nombre:f.nombre,estado:"ok",fecha:formatear(a),detalle:""};
+ }catch(e){return{nombre:f.nombre,estado:"error",fecha:null,detalle:e instanceof Error?e.message:String(e)}}
 }
 
-
-// ============================================================
-// SEGURIDAD HTML
-// ============================================================
-
-function escapeHtml(valor) {
-
-    return String(valor)
-
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
+function render(r){
+ grid.innerHTML=r.map(i=>`<article class="card ${i.estado}"><div class="nombre">${esc(i.nombre)}</div><div class="fecha">${esc(i.estado==="ok"?"Actualizado: "+i.fecha:"No disponible")}</div><div class="detalle">${i.detalle?esc(i.detalle):"&nbsp;"}</div></article>`).join("");
 }
 
-
-// ============================================================
-// INICIO
-// ============================================================
-
-cargarDatos();
-
-setInterval(
-    cargarDatos,
-    INTERVALO
-);
-
+async function cargar(){
+ estadoGeneral.textContent="Actualizando…";
+ const r=await Promise.all(FUENTES.map(leerFuente));
+ render(r);
+ const e=r.filter(i=>i.estado!=="ok").length;
+ estadoGeneral.textContent=e===0?"Todos los datos disponibles":`${e} ${e===1?"fuente con error":"fuentes con error"}`;
+ ultimaConsulta.textContent="Última consulta: "+new Intl.DateTimeFormat("es-UY",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());
+}
+cargar();
+setInterval(cargar,INTERVALO);
 </script>
-
-
 </body>
-
 </html>
