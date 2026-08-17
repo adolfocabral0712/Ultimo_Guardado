@@ -1,25 +1,18 @@
 {
     "$schema": "node_modules/wrangler/config-schema.json",
 
-    "name": "ultimo-guardado",
+    "name": "control-actualizaciones",
 
     "main": "src/index.js",
 
-    "compatibility_date": "2026-07-25",
-
-    "workers_dev": true,
+    "compatibility_date": "2026-08-17",
 
     "assets": {
         "directory": "./public",
         "binding": "ASSETS",
+
         "run_worker_first": [
             "/api/*"
-        ]
-    },
-
-    "triggers": {
-        "crons": [
-            "*/30 * * * *"
         ]
     }
 }
