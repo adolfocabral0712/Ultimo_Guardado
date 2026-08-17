@@ -10,7 +10,7 @@
 .dashboard{width:min(1250px,100%);margin:auto;padding:24px}.header{display:flex;justify-content:space-between;gap:20px;margin-bottom:20px}
 h1{margin:0;font-size:32px}.sub{margin-top:7px;color:var(--muted);font-size:13px}.status{padding:9px 13px;border:1px solid var(--border);border-radius:999px;background:var(--panel);color:var(--muted);font-size:12px;height:max-content}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(280px,1fr));gap:14px}.card{position:relative;padding:18px 18px 17px 21px;border:1px solid var(--border);border-radius:16px;background:linear-gradient(180deg,rgba(17,36,58,.98),rgba(13,27,45,.98))}
-.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--yellow)}.card.ok:before{background:var(--green)}.card.error:before{background:var(--red)}
+.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--yellow)}.card.ok:before{background:var(--green)}.card.error:before{background:var(--red)}.card.atrasado{background:linear-gradient(180deg,rgba(127,29,29,.96),rgba(69,10,10,.96));border-color:rgba(239,68,68,.55)}.card.atrasado:before{background:var(--red)}
 .nombre{color:#cbd5e1;font-size:12px;font-weight:800;letter-spacing:.55px;text-transform:uppercase}.fecha{margin-top:15px;font-size:20px;font-weight:800}.detalle{margin-top:9px;color:var(--muted);font-size:10px}
 .footer{display:flex;justify-content:space-between;gap:16px;margin-top:18px;color:var(--muted);font-size:10px}
 @media(max-width:760px){.dashboard{padding:12px}.header{display:block}.status{display:inline-block;margin-top:10px}.grid{grid-template-columns:1fr}.fecha{font-size:17px}.footer{display:block}}
@@ -99,8 +99,22 @@ async function leerFuente(f){
  }catch(e){return{nombre:f.nombre,estado:"error",fecha:null,fechaOrden:0,detalle:e instanceof Error?e.message:String(e)}}
 }
 
+function minutosDesdeActualizacion(item){
+ if(!item || !item.fechaOrden) return null;
+ return Math.floor((Date.now() - item.fechaOrden) / 60000);
+}
+
 function render(r){
- grid.innerHTML=r.map(i=>`<article class="card ${i.estado}"><div class="nombre">${esc(i.nombre)}</div><div class="fecha">${esc(i.estado==="ok"?"Actualizado: "+i.fecha:"No disponible")}</div><div class="detalle">${i.detalle?esc(i.detalle):"&nbsp;"}</div></article>`).join("");
+ grid.innerHTML=r.map(i=>{
+   const minutos=minutosDesdeActualizacion(i);
+   const atrasado=i.estado==="ok" && minutos!==null && minutos>30;
+   const clase=atrasado ? "atrasado" : i.estado;
+   const detalle=atrasado
+      ? `Hace ${minutos} min · supera 30 min`
+      : (i.detalle ? i.detalle : "&nbsp;");
+
+   return `<article class="card ${clase}"><div class="nombre">${esc(i.nombre)}</div><div class="fecha">${esc(i.estado==="ok"?"Actualizado: "+i.fecha:"No disponible")}</div><div class="detalle">${detalle==="&nbsp;" ? detalle : esc(detalle)}</div></article>`;
+ }).join("");
 }
 
 async function cargar(){
