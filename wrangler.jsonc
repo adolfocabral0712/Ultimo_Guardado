@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
 
-  "name": "dashboard-ultimo-guardado",
+  "name": "ultimo-guardado",
 
   "main": "src/index.js",
 
