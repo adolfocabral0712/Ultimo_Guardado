@@ -19,7 +19,7 @@ h1{margin:0;font-size:32px}.sub{margin-top:7px;color:var(--muted);font-size:13px
 <body>
 <main class="dashboard">
 <header class="header">
-<div><h1>Control de Actualizaciones</h1><div class="sub">Lectura directa de archivos JSON desde Dropbox</div></div>
+<div><h1>Control de Actualizaciones</h1><div class="sub">Estado consolidado de fuentes de datos</div></div>
 <div id="estadoGeneral" class="status">Cargando datos…</div>
 </header>
 <section id="grid" class="grid"></section>
@@ -27,17 +27,17 @@ h1{margin:0;font-size:32px}.sub{margin-top:7px;color:var(--muted);font-size:13px
 </main>
 <script>
 const FUENTES=[
-{nombre:"AGREGAR CONDUCTORES A REMITO SP",url:"https://dl.dropbox.com/scl/fi/i3jl55qidljw8ex74tbvf/AgregarConductoresRemitoSP.json?rlkey=k34tc8hbz4kfweuvg01cxypdp&dl=1"},
-{nombre:"CONSULTAS SISTEMA",url:"https://dl.dropbox.com/scl/fi/v165fuiec8av7q8l6ntyh/ConsultasSistema.json?rlkey=3yip9f9dmy7j56d8l7mvr0wul&dl=1"},
-{nombre:"MEDICIONES PLANTA",url:"https://dl.dropbox.com/scl/fi/ri23xu428izh29irawrvr/Mediciones.json?rlkey=54u6a72489nu5qejnqwb9jw91&dl=1"},
-{nombre:"PILAS Online",url:"https://dl.dropbox.com/scl/fi/bx7bxqkh2f3dmwu5664ba/PilasOnline.json?rlkey=cxgums4j1z2pj8jkz0w7a9zmh&dl=1"},
-{nombre:"ESTADO REMITOS",url:"https://dl.dropbox.com/scl/fi/eo971dn4yrjz5h71qkh2b/EstadoDescargaRemitos.json?rlkey=j5udth4t07t8vpaoyqel87j93&dl=1"},
-{nombre:"PLANILLA",url:"https://dl.dropbox.com/scl/fi/ync2zyrj5tnkzba9bko6h/PLANILLA.json?rlkey=kft3r15zhgdq2vbqbzs0nsgfc&dl=1"},
-{nombre:"PLANILLA JAUSER",url:"https://dl.dropbox.com/scl/fi/9e8mjzpmasxn781f3tr1s/PlanillaJauser.json?rlkey=h9ugbe1k5blfuid0q9ey06apx&dl=1"},
-{nombre:"TABLERO ArcGis",url:"https://dl.dropbox.com/scl/fi/utpw7rrrzvbm0bimeptdw/TableroPredio.json?rlkey=wuh2g2zkv8gfqx30lezitlfpx&dl=1"},
-{nombre:"DESCARGA CIERRE TURNO",url:"https://dl.dropbox.com/scl/fi/u60rutxb6znq6oxtuhspi/DescargaCierreTurno.json?rlkey=h2nzakpz2np5xoj0avdlbg8j9&dl=1"},
-{nombre:"CONTADOR RENDIMIENTOS DENSIDAD BASICA",url:"https://dl.dropbox.com/scl/fi/q2dv9oijwl7zbfozqd4kf/ContadorPPSDensidad.json?rlkey=etpq2if9ggozpsmb35dgku7a8&dl=1"},
-{nombre:"MUESTRAS CIERRE",url:"https://dl.dropbox.com/scl/fi/439wwzcj91fifxlbhi6vy/MuestrasCierre.json?rlkey=k5v092rq9pw960pjwoe5rb3fd&dl=1"}
+{nombre:"AGREGAR CONDUCTORES A REMITO SP",url:"/api/agregar-conductores"},
+{nombre:"CONSULTAS SISTEMA",url:"/api/consultas-sistema"},
+{nombre:"MEDICIONES PLANTA",url:"/api/mediciones-planta"},
+{nombre:"PILAS Online",url:"/api/pilas-online"},
+{nombre:"ESTADO REMITOS",url:"/api/estado-remitos"},
+{nombre:"PLANILLA",url:"/api/planilla"},
+{nombre:"PLANILLA JAUSER",url:"/api/planilla-jauser"},
+{nombre:"TABLERO ArcGis",url:"/api/tablero-arcgis"},
+{nombre:"DESCARGA CIERRE TURNO",url:"/api/descarga-cierre-turno"},
+{nombre:"CONTADOR RENDIMIENTOS DENSIDAD BASICA",url:"/api/contador-rendimientos-densidad"},
+{nombre:"MUESTRAS CIERRE",url:"/api/muestras-cierre"}
 ];
 const INTERVALO=5*60*1000;
 const grid=document.getElementById("grid"),estadoGeneral=document.getElementById("estadoGeneral"),ultimaConsulta=document.getElementById("ultimaConsulta");
